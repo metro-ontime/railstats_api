@@ -8,7 +8,7 @@ export default ({ config, db }) => resource({
 	/** GET / - List all entities */
 	index({ params }, res) {
     db.getLatestNetworkStats().then((data) => {
-      res.json({ "data": data });
+      res.json({ ...data });
     })
 	},
 });

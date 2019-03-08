@@ -24,7 +24,7 @@ export default ({ config, db }) => resource({
 	/** GET /:id - Return a given entity */
 	read({ line }, res) {
     db.getLatestLineStats(line).then((data) => {
-      res.json({ "line": line, "data": data });
+      res.json({ ...data });
     });
 	},
 });
