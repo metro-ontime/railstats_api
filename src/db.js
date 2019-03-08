@@ -24,24 +24,35 @@ const whenGotS3Object = (params) => {
   });
 };
 
-const getLatestLineStats = async (lineId) => {
-  const listParams = {Bucket: 'h4la-metro-performance', Prefix: 'data/summaries'};
-  const objects = await whenListAllObjects(listParams);
-  const mostRecent = objects[objects.length - 1];
-  const objectParams = {Bucket: 'h4la-metro-performance', Key: mostRecent};
-  const allData = await whenGotS3Object(objectParams);
-  const data = allData[`${lineId}_lametro-rail`];
-  return data
+const getLatestLineStats = (lineId) => {
+  return new Promise((resolve) => {
+    const listParams = {Bucket: 'h4la-metro-performance', Prefix: 'data/summaries'};
+    whenListAllObjects(listParams).then((objects) => {
+      const mostRecent = objects[objects.length - 1];
+      const objectParams = {Bucket: 'h4la-metro-performance', Key: mostRecent};
+      whenGotS3Object(objectParams).then((allData) => {
+        const data = allData[`${lineId}_lametro-rail`];
+        resolve(data);
+      });
+    });
+  });
 };
 
-const getLatestNetworkStats = async () => {
-  const listParams = {Bucket: 'h4la-metro-performance', Prefix: 'data/summaries'};
-  const lineObjects = await whenListAllObjects(listParams);
-  let mostRecent = lineObjects[lineObjects.length - 1]
+const getLatestNetworkStats = () => {
+  return new Promise((resolve) => {
+    const listParams = {Bucket: 'h4la-metro-performance', Prefix: 'data/summaries'};
+    whenListAllObjects(listParams).then(lineObjects => {
+      let mostRecent = lineObjects[lineObjects.length - 1]
+      const objectParams = {Bucket: 'h4la-metro-performance', Key: mostRecent};
+      const data = whenGotS3Object(objectParams).then(data => {
+        const preparedData = prepareData(data);
+        resolve(preparedData);
+      });
+    });
+  });
+};
 
-  const objectParams = {Bucket: 'h4la-metro-performance', Key: mostRecent};
-  const data = await whenGotS3Object(objectParams);
-
+const prepareData = data => {
   const dataObjects = Object.keys(data).map((key) => {
     return data[key]
   });
@@ -81,7 +92,6 @@ const getLatestNetworkStats = async () => {
     mean_time_between: overallMeanTimeBetween,
     timestamp: timestamp
   };
-
   return overallData;
 };
 
