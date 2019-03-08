@@ -1,7 +1,7 @@
 {
-  "name": "express-es6-rest-api",
-  "version": "0.3.0",
-  "description": "Starter project for an ES6 RESTful Express API",
+  "name": "railstats_api",
+  "version": "0.1.0",
+  "description": "Performance data API for railstats.org",
   "main": "dist",
   "scripts": {
     "dev": "nodemon -w src --exec \"babel-node src --presets es2015,stage-0\"",
@@ -24,8 +24,8 @@
       "no-unused-vars": 1
     }
   },
-  "repository": "developit/express-es6-rest-api",
-  "author": "Jason Miller <jason@developit.ca>",
+  "repository": "metro-ontime/railstats_api",
+  "author": "Cameron Sexton",
   "license": "MIT",
   "dependencies": {
     "aws-sdk": "^2.417.0",
