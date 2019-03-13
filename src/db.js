@@ -45,14 +45,14 @@ const getLatestNetworkStats = () => {
       let mostRecent = lineObjects[lineObjects.length - 1]
       const objectParams = {Bucket: 'h4la-metro-performance', Key: mostRecent};
       const data = whenGotS3Object(objectParams).then(data => {
-        const preparedData = prepareData(data);
+        const preparedData = prepareNetworkData(data);
         resolve(preparedData);
       });
     });
   });
 };
 
-const prepareData = data => {
+const prepareNetworkData = data => {
   const dataObjects = Object.keys(data).map((key) => {
     return data[key]
   });
@@ -97,6 +97,7 @@ const prepareData = data => {
 
 const db = {};
 db.getLatestLineStats = getLatestLineStats;
-db.getLatestNetworkStats = getLatestNetworkStats
+db.getLatestNetworkStats = getLatestNetworkStats;
+db.prepareNetworkData = prepareNetworkData;
 
-export default db
+module.exports = db

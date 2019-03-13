@@ -5,7 +5,7 @@ let app;
 
 describe('GET /line', function() {
   before(function() {
-    app = require('../src/index');
+    app = require('../../src/index');
   });
 
   after(function() {
