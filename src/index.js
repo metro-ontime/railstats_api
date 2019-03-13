@@ -3,10 +3,11 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
-import initializeDb from './db';
+import db from './db';
 import middleware from './middleware';
 import api from './api';
 import config from './config.json';
+const promMid = require('express-prometheus-middleware');
 
 let app = express();
 app.server = http.createServer(app);
@@ -23,18 +24,20 @@ app.use(bodyParser.json({
 	limit : config.bodyLimit
 }));
 
-// connect to db
-initializeDb( db => {
+app.use(middleware({ config, db }));
 
-	// internal middleware
-	app.use(middleware({ config, db }));
+app.use(promMid({
+  metricsPath: '/metrics',
+  collectDefaultMetrics: true,
+  requestDurationBuckets: [0.1, 0.5, 1, 1.5],
+}));
 
-	// api router
-	app.use('/', api({ config, db }));
+app.use('/', api({ config, db }));
 
-	app.server.listen(process.env.PORT || config.port, () => {
-		console.log(`Started on port ${app.server.address().port}`);
-	});
+app.server.listen(process.env.PORT || config.port, () => {
+  console.log(`Started on port ${app.server.address().port}`);
 });
 
-export default app;
+const server = app.server;
+
+module.exports = server;

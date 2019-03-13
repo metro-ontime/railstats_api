@@ -99,7 +99,4 @@ const db = {};
 db.getLatestLineStats = getLatestLineStats;
 db.getLatestNetworkStats = getLatestNetworkStats
 
-export default callback => {
-	// connect to a database if needed, then pass it to `callback`:
-	callback(db);
-}
+export default db
