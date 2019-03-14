@@ -41,6 +41,9 @@ cd railstats_api
 # Install dependencies
 npm install
 
+# Run tests
+npm run test
+
 # Start development live-reload server (port 8080):
 npm run dev
 
