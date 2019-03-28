@@ -52,6 +52,36 @@ const getLatestNetworkStats = () => {
   });
 };
 
+const getNetworkHistory = () => {
+  return new Promise((resolve) => {
+    const listParams = {Bucket: 'h4la-metro-performance', Prefix: 'data/summaries'};
+    whenListAllObjects(listParams).then(lineObjects => {
+      Promise.all(lineObjects.map(item => {
+        return whenGotS3Object({Bucket: 'h4la-metro-performance', Key: item})
+      }))
+      .then(data => {
+        const preparedData = data.map(datum => prepareNetworkData(datum))
+        resolve(preparedData);
+      })
+    });
+  });
+};
+
+const getLineHistory = (lineId) => {
+  return new Promise((resolve) => {
+    const listParams = {Bucket: 'h4la-metro-performance', Prefix: 'data/summaries'};
+    whenListAllObjects(listParams).then(lineObjects => {
+      Promise.all(lineObjects.map(item => {
+        return whenGotS3Object({Bucket: 'h4la-metro-performance', Key: item})
+      }))
+      .then(data => {
+        const preparedData = data.map(summary => summary[`${lineId}_lametro-rail`]);
+        resolve(preparedData);
+      })
+    });
+  });
+};
+
 const prepareNetworkData = data => {
   const dataObjects = Object.keys(data).map((key) => {
     return data[key]
@@ -99,5 +129,8 @@ const db = {};
 db.getLatestLineStats = getLatestLineStats;
 db.getLatestNetworkStats = getLatestNetworkStats;
 db.prepareNetworkData = prepareNetworkData;
+db.getNetworkHistory = getNetworkHistory;
+db.getLineHistory = getLineHistory;
+
 
 module.exports = db
