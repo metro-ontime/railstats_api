@@ -60,7 +60,8 @@ const getNetworkHistory = () => {
         return whenGotS3Object({Bucket: 'h4la-metro-performance', Key: item})
       }))
       .then(data => {
-        resolve(data);
+        const allLineData = data.map(datum => prepareNetworkData(datum))
+        resolve([data, allLineData]);
       })
     });
   });
@@ -98,13 +99,15 @@ const prepareNetworkData = data => {
   const overallMeanTimeBetween = sumMeanTimeBetween / dataObjects.length;
 
   const timestamp = dataObjects[0]["timestamp"];
+  const date = dataObjects[0]["date"];
 
   const overallData = {
     ontime: totalsOntime,
     total_arrivals_analyzed: totalArrivals,
     total_scheduled_arrivals: totalScheduled,
     mean_time_between: overallMeanTimeBetween,
-    timestamp: timestamp
+    timestamp: timestamp,
+    date: date
   };
   return overallData;
 };
