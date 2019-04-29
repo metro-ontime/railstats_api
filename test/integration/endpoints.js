@@ -37,7 +37,7 @@ describe('GET /line', function() {
       .expect('Content-Type', /json/)
       .expect(200)
       .then(response => {
-        assert.deepEqual(Object.keys(response.body), ["ontime", "total_arrivals_analyzed", "total_scheduled_arrivals", "mean_time_between", "timestamp"])
+        assert.deepEqual(Object.keys(response.body), ["ontime", "total_arrivals_analyzed", "total_scheduled_arrivals", "mean_time_between", "timestamp", "best_line", "worst_line", "date"])
       });
   });
 
