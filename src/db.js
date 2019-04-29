@@ -69,7 +69,9 @@ const getNetworkHistory = () => {
 
 const prepareNetworkData = data => {
   const dataObjects = Object.keys(data).map((key) => {
-    return data[key]
+    const datum = data[key]
+    datum.name = key
+    return datum
   });
   const windows = Array.from({length: 5}, (k, n) => n + 1);
 
@@ -98,6 +100,16 @@ const prepareNetworkData = data => {
   }, dataObjects[0]["mean_time_between"]);
   const overallMeanTimeBetween = sumMeanTimeBetween / dataObjects.length;
 
+  const worstLine = dataObjects.reduce((previousValue, currentValue) => {
+    const line = currentValue["mean_time_between"] > previousValue["mean_time_between"] ? currentValue : previousValue
+    return { name: line.name.slice(0,3), mean_time_between: line.mean_time_between }
+  });
+
+  const bestLine = dataObjects.reduce((previousValue, currentValue) => {
+    const line = currentValue["mean_time_between"] < previousValue["mean_time_between"] ? currentValue : previousValue
+    return { name: line.name.slice(0,3), mean_time_between: line.mean_time_between }
+  });
+
   const timestamp = dataObjects[0]["timestamp"];
   const date = dataObjects[0]["date"];
 
@@ -107,6 +119,8 @@ const prepareNetworkData = data => {
     total_scheduled_arrivals: totalScheduled,
     mean_time_between: overallMeanTimeBetween,
     timestamp: timestamp,
+    best_line: bestLine,
+    worst_line: worstLine,
     date: date
   };
   return overallData;
