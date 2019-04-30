@@ -10,11 +10,11 @@ module.exports = {
   "total_scheduled_arrivals": 24059,
   "mean_time_between": 817.471711618,
   "timestamp": "2019-03-13T14:31:14.330777-07:00",
-  "best_line": {
+  "most_frequent": {
     "mean_time_between": 590.123076923,
     "name": "803"
   },
-  "worst_line": {
+  "least_frequent": {
     "mean_time_between": 776.53652968,
     "name": "801"
   },

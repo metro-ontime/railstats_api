@@ -100,13 +100,13 @@ const prepareNetworkData = data => {
   }, dataObjects[0]["mean_time_between"]);
   const overallMeanTimeBetween = sumMeanTimeBetween / dataObjects.length;
 
-  const worstLine = dataObjects.reduce((previousValue, currentValue) => {
-    const line = currentValue["mean_time_between"] > previousValue["mean_time_between"] ? currentValue : previousValue
+  const mostFrequent = dataObjects.reduce((previousValue, currentValue) => {
+    const line = currentValue["mean_time_between"] < previousValue["mean_time_between"] ? currentValue : previousValue
     return { name: line.name.slice(0,3), mean_time_between: line.mean_time_between }
   });
 
-  const bestLine = dataObjects.reduce((previousValue, currentValue) => {
-    const line = currentValue["mean_time_between"] < previousValue["mean_time_between"] ? currentValue : previousValue
+  const leastFrequent = dataObjects.reduce((previousValue, currentValue) => {
+    const line = currentValue["mean_time_between"] > previousValue["mean_time_between"] ? currentValue : previousValue
     return { name: line.name.slice(0,3), mean_time_between: line.mean_time_between }
   });
 
@@ -119,8 +119,8 @@ const prepareNetworkData = data => {
     total_scheduled_arrivals: totalScheduled,
     mean_time_between: overallMeanTimeBetween,
     timestamp: timestamp,
-    best_line: bestLine,
-    worst_line: worstLine,
+    most_frequent: mostFrequent,
+    least_frequent: leastFrequent,
     date: date
   };
   return overallData;
