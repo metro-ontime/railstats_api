@@ -18,5 +18,49 @@ module.exports = {
     "mean_time_between": 776.53652968,
     "name": "801"
   },
+  "most_reliable": {
+    "min_1": {
+      "line": "805_lametro-rail",
+      "percent_ontime": 0.5453125
+    },
+    "min_2": {
+      "line": "805_lametro-rail",
+      "percent_ontime": 0.8015625
+    },
+    "min_3": {
+      "line": "805_lametro-rail",
+      "percent_ontime": 0.9140625
+    },
+    "min_4": {
+      "line": "805_lametro-rail",
+      "percent_ontime": 0.9796875
+    },
+    "min_5": {
+      "line": "805_lametro-rail",
+      "percent_ontime": 0.996875
+    }
+  },
+  "least_reliable": {
+    "min_1": {
+      "line": "806_lametro-rail",
+      "percent_ontime": 0.43225233229675697
+    },
+    "min_2": {
+      "line": "802_lametro-rail",
+      "percent_ontime": 0.6807817589576547
+    },
+    "min_3": {
+      "line": "802_lametro-rail",
+      "percent_ontime": 0.8379478827361564
+    },
+    "min_4": {
+      "line": "803_lametro-rail",
+      "percent_ontime": 0.9188370684433677
+    },
+    "min_5": {
+      "line": "803_lametro-rail",
+      "percent_ontime": 0.9503331314354937
+    }
+  },
   "date": "2019-03-13"
 }

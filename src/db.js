@@ -110,6 +110,42 @@ const prepareNetworkData = data => {
     return { name: line.name.slice(0,3), mean_time_between: line.mean_time_between }
   });
 
+  const mostReliable = dataObjects.reduce((previousValue, currentValue) => {
+    const minutes = windows.map(i => {
+      return currentValue.ontime[`${i}_min`] / currentValue.total_arrivals_analyzed > (previousValue[`min_${i}`] && previousValue[`min_${i}`].percent_ontime || null) ?
+        {
+          line: currentValue.name,
+          percent_ontime: currentValue.ontime[`${i}_min`] / currentValue.total_arrivals_analyzed
+        } :
+        previousValue[`min_${i}`]
+    })
+    return {
+      min_1: minutes[0],
+      min_2: minutes[1],
+      min_3: minutes[2],
+      min_4: minutes[3],
+      min_5: minutes[4]
+    };
+  });
+
+  const leastReliable = dataObjects.reduce((previousValue, currentValue) => {
+    const minutes = windows.map(i => {
+      return currentValue.ontime[`${i}_min`] / currentValue.total_arrivals_analyzed < (previousValue[`min_${i}`] && previousValue[`min_${i}`].percent_ontime || 1.01) ?
+        {
+          line: currentValue.name,
+          percent_ontime: currentValue.ontime[`${i}_min`] / currentValue.total_arrivals_analyzed
+        } :
+        previousValue[`min_${i}`]
+    })
+    return {
+      min_1: minutes[0],
+      min_2: minutes[1],
+      min_3: minutes[2],
+      min_4: minutes[3],
+      min_5: minutes[4]
+    };
+  });
+
   const timestamp = dataObjects[0]["timestamp"];
   const date = dataObjects[0]["date"];
 
@@ -121,6 +157,8 @@ const prepareNetworkData = data => {
     timestamp: timestamp,
     most_frequent: mostFrequent,
     least_frequent: leastFrequent,
+    most_reliable: mostReliable,
+    least_reliable: leastReliable,
     date: date
   };
   return overallData;
