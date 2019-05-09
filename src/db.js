@@ -111,39 +111,33 @@ const prepareNetworkData = data => {
   });
 
   const mostReliable = dataObjects.reduce((previousValue, currentValue) => {
-    const minutes = windows.map(i => {
-      return currentValue.ontime[`${i}_min`] / currentValue.total_arrivals_analyzed > (previousValue[`min_${i}`] && previousValue[`min_${i}`].percent_ontime || null) ?
+    return windows.map(i => {
+      return currentValue.ontime[`${i}_min`] / currentValue.total_arrivals_analyzed > (previousValue[`${i}_min`] && previousValue[`${i}_min`].percent_ontime || null) ?
         {
           line: currentValue.name,
           percent_ontime: currentValue.ontime[`${i}_min`] / currentValue.total_arrivals_analyzed
         } :
-        previousValue[`min_${i}`]
+        previousValue[`${i}_min`]
     })
-    return {
-      min_1: minutes[0],
-      min_2: minutes[1],
-      min_3: minutes[2],
-      min_4: minutes[3],
-      min_5: minutes[4]
-    };
+    .reduce((obj, item, i) => {
+      obj[`${i + 1}_min`] = item
+      return obj
+    }, {})
   });
 
   const leastReliable = dataObjects.reduce((previousValue, currentValue) => {
-    const minutes = windows.map(i => {
-      return currentValue.ontime[`${i}_min`] / currentValue.total_arrivals_analyzed < (previousValue[`min_${i}`] && previousValue[`min_${i}`].percent_ontime || 1.01) ?
+    return windows.map(i => {
+      return currentValue.ontime[`${i}_min`] / currentValue.total_arrivals_analyzed < (previousValue[`${i}_min`] && previousValue[`${i}_min`].percent_ontime || 1.01) ?
         {
           line: currentValue.name,
           percent_ontime: currentValue.ontime[`${i}_min`] / currentValue.total_arrivals_analyzed
         } :
-        previousValue[`min_${i}`]
-    })
-    return {
-      min_1: minutes[0],
-      min_2: minutes[1],
-      min_3: minutes[2],
-      min_4: minutes[3],
-      min_5: minutes[4]
-    };
+        previousValue[`${i}_min`]
+      })
+      .reduce((obj, item, i) => {
+        obj[`${i + 1}_min`] = item
+        return obj
+      }, {})
   });
 
   const timestamp = dataObjects[0]["timestamp"];
