@@ -25,6 +25,20 @@ const whenGotS3Object = (params) => {
   });
 };
 
+const getAvailableDates = () => {
+  return new Promise(resolve => {
+    const listParams = {Bucket: 'h4la-metro-performance', Prefix: 'data/summaries'};
+    whenListAllObjects(listParams).then((objects) => {
+      const regex = /data\/summaries\/(.*).json/;
+      const dates = objects.map(obj => {
+        const match = regex.exec(obj);
+        return match && match[1]
+      }).filter(date => typeof date === "string");
+      resolve({ dates })
+    });
+  })
+}
+
 const getLatestLineStats = (lineId) => {
   return new Promise((resolve) => {
     const listParams = {Bucket: 'h4la-metro-performance', Prefix: 'data/summaries'};
@@ -183,5 +197,6 @@ module.exports = {
   prepareNetworkData,
   getNetworkHistory,
   getNetworkStatsForDate,
-  getLineStatsForDate
+  getLineStatsForDate,
+  getAvailableDates
 };

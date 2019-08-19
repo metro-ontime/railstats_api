@@ -99,4 +99,16 @@ describe('GET /line', function() {
         done(err)
       })
   });
+
+  it('respondes with an array', function() {
+    request(app)
+      .get('/dates')
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .then(response => {
+        assert(Array.isArray(response.body.dates))
+      })
+  })
 });
+
