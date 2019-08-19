@@ -6,10 +6,16 @@ export default ({ config, db }) => resource({
 	id : 'network',
 
 	/** GET / - List all entities */
-	index({ params }, res) {
-    db.getLatestNetworkStats().then((data) => {
-      res.json({ ...data });
-    })
+	index({ query }, res) {
+    if (query.date) {
+      db.getNetworkStatsForDate(query.date).then(data => {
+        res.json({ ...data })
+      })
+    } else {
+      db.getLatestNetworkStats().then((data) => {
+        res.json({ ...data })
+      })
+    }
 	},
 });
 
