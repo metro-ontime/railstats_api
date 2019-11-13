@@ -22,9 +22,15 @@ export default ({ config, db }) => resource({
 	},
 
 	/** GET /:id - Return a given entity */
-	read({ line }, res) {
-    db.getLatestLineStats(line).then((data) => {
-      res.json({ ...data });
-    });
+	read({ line, query }, res) {
+    if (query.date) {
+      db.getLineStatsForDate(query.date, line).then(data=> {
+        res.json({ ...data });
+      })
+    } else {
+      db.getLatestLineStats(line).then((data) => {
+        res.json({ ...data });
+      });
+    }
 	},
 });

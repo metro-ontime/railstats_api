@@ -14,15 +14,30 @@ const whenListAllObjects = (params) => {
 };
 
 const whenGotS3Object = (params) => {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     s3.makeUnauthenticatedRequest('getObject', params, function (err, data) {
-      if (err) console.log(err);
-      else {
+      if (err) {
+        reject({ error: "Could not get S3 Object"})
+      } else {
         resolve(JSON.parse(data.Body.toString()));
       };
     });
   });
 };
+
+const getAvailableDates = () => {
+  return new Promise(resolve => {
+    const listParams = {Bucket: 'h4la-metro-performance', Prefix: 'data/summaries'};
+    whenListAllObjects(listParams).then((objects) => {
+      const regex = /data\/summaries\/(.*).json/;
+      const dates = objects.map(obj => {
+        const match = regex.exec(obj);
+        return match && match[1]
+      }).filter(date => typeof date === "string");
+      resolve({ dates })
+    });
+  })
+}
 
 const getLatestLineStats = (lineId) => {
   return new Promise((resolve) => {
@@ -51,6 +66,24 @@ const getLatestNetworkStats = () => {
     });
   });
 };
+
+const getNetworkStatsForDate = dateString => {
+  return new Promise(resolve => {
+    const objectParams = { Bucket: 'h4la-metro-performance', Key: `data/summaries/${dateString}.json`};
+    whenGotS3Object(objectParams)
+      .then(data => resolve(prepareNetworkData(data)))
+      .catch(err => resolve({ error: `Couldn't get data for ${dateString}`}));
+  })
+}
+
+const getLineStatsForDate = (dateString, lineId) => {
+  return new Promise(resolve => {
+    const objectParams = { Bucket: 'h4la-metro-performance', Key: `data/summaries/${dateString}.json`};
+    whenGotS3Object(objectParams)
+      .then(data => resolve(data[`${lineId}_lametro-rail`]))
+      .catch(err => resolve({ error: `Couldn't get data for ${dateString}`}));
+  })
+}
 
 const getNetworkHistory = () => {
   return new Promise((resolve) => {
@@ -158,10 +191,12 @@ const prepareNetworkData = data => {
   return overallData;
 };
 
-const db = {};
-db.getLatestLineStats = getLatestLineStats;
-db.getLatestNetworkStats = getLatestNetworkStats;
-db.prepareNetworkData = prepareNetworkData;
-db.getNetworkHistory = getNetworkHistory;
-
-module.exports = db
+module.exports = {
+  getLatestLineStats,
+  getLatestNetworkStats,
+  prepareNetworkData,
+  getNetworkHistory,
+  getNetworkStatsForDate,
+  getLineStatsForDate,
+  getAvailableDates
+};
