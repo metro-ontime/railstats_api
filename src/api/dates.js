@@ -7,7 +7,7 @@ export default ({ config, db }) => resource({
 
 	/** GET / - List all entities */
 	index({}, res) {
-    db.getAvailableDates().then(data => {
+    db.getAvailableSummaryDates().then(data => {
       res.json(data)
     })
 	},

@@ -3,11 +3,14 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
-import db from './db';
+// import db from './db';
+import { DB } from './s3';
 import middleware from './middleware';
 import api from './api';
 import config from './config.json';
 const promMid = require('express-prometheus-middleware');
+
+const db = new DB(config);
 
 let app = express();
 app.server = http.createServer(app);
