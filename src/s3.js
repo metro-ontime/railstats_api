@@ -18,7 +18,7 @@ export class DB {
     }
   }
 
-  getAvailableSummaryDates = () => {
+  getAvailableSummaryDates() {
     const params = { Bucket: this.bucket, Prefix: this.summary_prefix };
     return this.whenListAllObjects(params)
       .then(objects => {
@@ -31,7 +31,7 @@ export class DB {
       })
   }
 
-  getLatestLineStats = line => {
+  getLatestLineStats(line) {
     const params = { Bucket: this.bucket, Prefix: this.summary_prefix };
     return this.whenListAllObjects(params)
       .then(objects => {
@@ -42,14 +42,14 @@ export class DB {
       .then(data => data[`${line}_${this.metro_agency}`])
   }
 
-  getLineStatsForDate = (date, line) => {
+  getLineStatsForDate(date, line) {
     const params = { Bucket: this.bucket, Key: `${this.summary_prefix}/${this.metro_agency}/${date}.json` };
     return this.whenGotS3Object(params).then(data => {
       return data[`${line}_${this.metro_agency}`];
     }).catch(err => ({ error: `Couldn't get data for line ${line} on date ${date}` }));
   }
 
-  getLatestNetworkStats = () => {
+  getLatestNetworkStats() {
     const params = { Bucket: this.bucket, Prefix: this.summary_prefix };
     return this.whenListAllObjects(params)
       .then(objects => {
@@ -60,7 +60,7 @@ export class DB {
       .then(data => prepareNetworkData(data));
   }
 
-  getNetworkHistory = () => {
+  getNetworkHistory() {
     const params = { Bucket: this.bucket, Prefix: this.summary_prefix };
     return this.whenListAllObjects(params)
       .then(objects => {
@@ -73,7 +73,7 @@ export class DB {
       })
   }
 
-  getNetworkStatsForDate = date => {
+  getNetworkStatsForDate(date) {
     const params = { Bucket: this.bucket, Key: `${this.summary_prefix}/${this.metro_agency}/${date}.json`};
     return this.whenGotS3Object(params)
       .then(data => prepareNetworkData(data))
