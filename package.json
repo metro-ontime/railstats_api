@@ -4,11 +4,11 @@
   "description": "Performance data API for railstats.org",
   "main": "dist",
   "scripts": {
-    "dev": "nodemon -w src --exec \"babel-node src --presets es2015,stage-0\"",
-    "build": "babel src -s -D -d dist --presets es2015,stage-0",
+    "dev": "nodemon -w src --exec babel-node dist",
+    "build": "babel src -s -D -d dist",
     "start": "node dist",
     "prestart": "npm run -s build",
-    "test": "mocha --require babel-register test/unit test/integration"
+    "test": "mocha --require @babel/register test/unit test/integration"
   },
   "eslintConfig": {
     "extends": "eslint:recommended",
@@ -38,12 +38,10 @@
     "resource-router-middleware": "^0.6.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.9.0",
-    "babel-core": "^6.9.0",
-    "babel-plugin-syntax-object-rest-spread": "^6.13.0",
-    "babel-preset-es2015": "^6.9.0",
-    "babel-preset-stage-0": "^6.5.0",
-    "babel-register": "^6.26.0",
+    "@babel/core": "^7.7.7",
+    "@babel/node": "^7.7.7",
+    "@babel/preset-env": "^7.7.7",
+    "@babel/register": "^7.7.7",
     "eslint": "^3.1.1",
     "mocha": "^6.0.2",
     "nodemon": "^1.9.2",
