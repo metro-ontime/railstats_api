@@ -1,4 +1,5 @@
 import S3 from 'aws-sdk/clients/s3';
+import { prepareNetworkData } from './lib/dataHelpers';
 
 export class DB {
   constructor(config) {
@@ -38,9 +39,7 @@ export class DB {
         return { Bucket: this.bucket, Key: mostRecent };
       })
       .then(this.whenGotS3Object)
-      .then(data => {
-        return data[`${line}_${this.metro_agency}`];
-      })
+      .then(data => data[`${line}_${this.metro_agency}`])
   }
 
   getLineStatsForDate = (date, line) => {
@@ -50,10 +49,36 @@ export class DB {
     }).catch(err => ({ error: `Couldn't get data for line ${line} on date ${date}` }));
   }
 
-  getLatestNetworkStats = () => {}
-  prepareNetworkData = () => {}
-  getNetworkHistory = () => {}
-  getNetworkStatsForDate = () => {}
+  getLatestNetworkStats = () => {
+    const params = { Bucket: this.bucket, Prefix: this.summary_prefix };
+    return this.whenListAllObjects(params)
+      .then(objects => {
+        const mostRecent = objects[objects.length - 1];
+        return { Bucket: this.bucket, Key: mostRecent };
+      })
+      .then(this.whenGotS3Object)
+      .then(data => prepareNetworkData(data));
+  }
+
+  getNetworkHistory = () => {
+    const params = { Bucket: this.bucket, Prefix: this.summary_prefix };
+    return this.whenListAllObjects(params)
+      .then(objects => {
+        const promises = objects.map(obj => this.whenGotS3Object({ Bucket: this.bucket, Key: obj }))
+        return Promise.all(promises)
+      })
+      .then(data => {
+        const allLineData = data.map(datum => prepareNetworkData(datum))
+        return [data, allLineData];
+      })
+  }
+
+  getNetworkStatsForDate = date => {
+    const params = { Bucket: this.bucket, Key: `${this.summary_prefix}/${this.metro_agency}/${date}.json`};
+    return this.whenGotS3Object(params)
+      .then(data => prepareNetworkData(data))
+      .catch(err => ({ error: `Couldn't get data for ${date}`}));
+  }
 }
 
 const whenListAllObjectsPublic = s3 => params => {
