@@ -6,8 +6,7 @@
   "scripts": {
     "dev": "nodemon -w src --exec babel-node dist",
     "build": "babel src -s -D -d dist",
-    "start": "node dist",
-    "prestart": "npm run -s build",
+    "start": "pm2 start dist --restart-delay 500",
     "test": "mocha --require @babel/register test/unit test/integration"
   },
   "eslintConfig": {
@@ -35,9 +34,11 @@
     "express": "^4.13.3",
     "express-prometheus-middleware": "^0.6.1",
     "morgan": "^1.8.0",
+    "pm2": "^4.2.1",
     "resource-router-middleware": "^0.6.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.7.7",
     "@babel/core": "^7.7.7",
     "@babel/node": "^7.7.7",
     "@babel/preset-env": "^7.7.7",

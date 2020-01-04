@@ -1,26 +1,13 @@
-FROM alpine:3.4
+FROM node:lts-alpine
 
-# File Author / Maintainer
-LABEL authors="Zouhir Chahoud <zouhir@zouhir.org>"
+COPY package.json /app/package.json
+RUN cd /app && npm install
 
-# Update & install required packages
-RUN apk add --update nodejs bash git
+COPY . /app
 
-# Install app dependencies
-COPY package.json /www/package.json
-RUN cd /www; npm install
+WORKDIR /app
+RUN npm run build
 
-# Copy app source
-COPY . /www
-
-# Set work directory to /www
-WORKDIR /www
-
-# set your port
 ENV PORT 8080
-
-# expose the port to outside world
 EXPOSE  8080
-
-# start command as per package.json
 CMD ["npm", "start"]
