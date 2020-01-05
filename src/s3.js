@@ -4,12 +4,12 @@ import { prepareNetworkData } from './lib/dataHelpers';
 export class DB {
   constructor(config) {
     this.s3 = new S3();
-    this.bucket = config.bucket;
-    this.summary_prefix = config.summary_prefix;
-    this.schedule_prefix = config.schedule_prefix;
-    this.tracking_prefix = config.tracking_prefix;
-    this.metro_agency = config.metro_agency;
-    if (config.public_bucket) {
+    this.bucket = config.BUCKET;
+    this.summary_prefix = config.SUMMARY_PREFIX;
+    this.schedule_prefix = config.SCHEDULE_PREFIX;
+    this.tracking_prefix = config.TRACKING_PREFIX;
+    this.metro_agency = config.METRO_AGENCY;
+    if (config.PUBLIC_BUCKET) {
       this.whenListAllObjects = whenListAllObjectsPublic(this.s3);
       this.whenGotS3Object = whenGotS3ObjectPublic(this.s3);
     } else {
