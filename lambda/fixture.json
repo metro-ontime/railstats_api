@@ -1,0 +1,38 @@
+{
+    "Records": [
+        {
+            "eventVersion": "2.1",
+            "eventSource": "aws:s3",
+            "awsRegion": "us-west-2",
+            "eventTime": "2020-01-05T08:33:22.408Z",
+            "eventName": "ObjectCreated:Put",
+            "userIdentity": {
+                "principalId": "AWS:AROAQQS3BVIPY2QZKMGNY:i-06180a0e6411ee19c"
+            },
+            "requestParameters": {
+                "sourceIPAddress": "52.53.176.219"
+            },
+            "responseElements": {
+                "x-amz-request-id": "54843899F34A51B1",
+                "x-amz-id-2": "r/PKihTVMdRhvI84LQtFnqmuB1lnCZ5nnmtk4Ds5ZQbyBgaZXwqnsQoa3VPiizORwWP50b58Z/g="
+            },
+            "s3": {
+                "s3SchemaVersion": "1.0",
+                "configurationId": "2531229f-a225-4bfb-b391-cfb25246fa3b",
+                "bucket": {
+                    "name": "railstats-la",
+                    "ownerIdentity": {
+                        "principalId": "A2AQMKNP5JQC2B"
+                    },
+                    "arn": "arn:aws:s3:::railstats-la"
+                },
+                "object": {
+                    "key": "summaries/lametro-rail/2020-01-04.json",
+                    "size": 2201,
+                    "eTag": "b74f4aa60258c22bc1cbd3f1a1c86ab4",
+                    "sequencer": "005E119F52570F761D"
+                }
+            }
+        }
+    ]
+}
