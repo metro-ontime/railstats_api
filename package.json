@@ -4,7 +4,7 @@
   "description": "Performance data API for railstats.org",
   "main": "dist",
   "scripts": {
-    "dev": "nodemon -w src --exec babel-node dist",
+    "dev": "nodemon -w src --exec babel-node src",
     "build": "babel src -s -D -d dist",
     "start": "node dist",
     "test": "mocha --require @babel/register test/unit test/integration"
