@@ -1,6 +1,8 @@
 import S3 from 'aws-sdk/clients/s3';
 import { prepareNetworkData } from './lib/dataHelpers';
 
+var fs = require('fs');
+
 export class DB {
   constructor(config) {
     this.s3 = new S3();
@@ -15,6 +17,7 @@ export class DB {
     } else {
       this.whenListAllObjects = whenListAllObjects(this.s3);
       this.whenGotS3Object = whenGotS3Object(this.s3);
+      this.whenGotS3ObjectStream = whenGotS3ObjectStream(this.s3);
     }
   }
 
@@ -58,6 +61,27 @@ export class DB {
       })
       .then(this.whenGotS3Object)
       .then(data => prepareNetworkData(data));
+  }
+/*
+  getLineScheduleForDate(date, line) {
+    const params = { Bucket: this.bucket, Key: `${this.summary_prefix}/${this.metro_agency}/${this.line}/${this.date}.csv` };
+    return whenGotS3ObjectStream(params)
+    .then(data => {
+      // change this line
+      return data[`${line}_${this.metro_agency}`];
+    }).catch(err => ({ error: `Couldn't get data for line ${line} on date ${date}` }));
+  }
+*/
+
+  getLatestSchedule() {
+    const params = { Bucket: this.bucket, Prefix: this.schedule_prefix };
+    return this.whenListAllObjects(params)
+      .then(objects => {
+        // console.log(objects)
+        const mostRecent = objects[objects.length - 1];
+        return { Bucket: this.bucket, Key: mostRecent };
+      })
+      .then(this.whenGotS3ObjectStream)
   }
 
   getNetworkHistory() {
@@ -126,5 +150,29 @@ const whenGotS3Object = s3 => params => {
         resolve(JSON.parse(data.Body.toString()));
       };
     })
+  })
+}
+
+const whenGotS3ObjectStream = s3 => params => {
+  return new Promise((resolve, reject) => {
+    var fileStream = fs.createWriteStream('./temp/file.csv')
+    var s3Stream = s3.getObject(params).createReadStream()
+
+    // Listen for errors returned by the service
+    s3Stream.on('error', function(err) {
+      // NoSuchKey: The specified key does not exist
+      console.error(err);
+    });
+
+    resolve(s3Stream)
+
+    /*
+    s3Stream.pipe(fileStream).on('error', function(err) {
+      // capture any errors that occur when writing data to the file
+      console.error('File Stream:', err);
+    }).on('close', function() {
+        console.log('Done.');
+    });
+    */
   })
 }
