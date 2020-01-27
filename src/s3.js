@@ -1,6 +1,8 @@
 import S3 from 'aws-sdk/clients/s3';
 import { prepareNetworkData } from './lib/dataHelpers';
 
+var fs = require('fs');
+
 export class DB {
   constructor(config) {
     this.s3 = new S3();
@@ -15,6 +17,7 @@ export class DB {
     } else {
       this.whenListAllObjects = whenListAllObjects(this.s3);
       this.whenGotS3Object = whenGotS3Object(this.s3);
+      this.whenGotS3ObjectStream = whenGotS3ObjectStream(this.s3);
     }
   }
 
@@ -58,6 +61,21 @@ export class DB {
       })
       .then(this.whenGotS3Object)
       .then(data => prepareNetworkData(data));
+  }
+
+  getLineScheduleForDate(line, date) {
+    const params = { Bucket: this.bucket, Key: `${this.schedule_prefix}/${this.metro_agency}/${line}/${date}.csv` };
+    return this.whenGotS3ObjectStream(params)
+  }
+
+  getLatestSchedule(line) {
+    const params = { Bucket: this.bucket, Prefix: `${this.schedule_prefix}/${this.metro_agency}/${line}` };
+    return this.whenListAllObjects(params)
+      .then(objects => {
+        const mostRecent = objects[objects.length - 1];
+        return { Bucket: this.bucket, Key: mostRecent };
+      })
+      .then(this.whenGotS3ObjectStream)
   }
 
   getNetworkHistory() {
@@ -126,5 +144,14 @@ const whenGotS3Object = s3 => params => {
         resolve(JSON.parse(data.Body.toString()));
       };
     })
+  })
+}
+
+const whenGotS3ObjectStream = s3 => params => {
+  return new Promise((resolve, reject) => {
+    var fileStream = fs.createWriteStream('./temp/file.csv')
+    var s3Stream = s3.getObject(params).createReadStream()
+
+    resolve(s3Stream)
   })
 }
