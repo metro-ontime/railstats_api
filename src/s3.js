@@ -78,6 +78,21 @@ export class DB {
       .then(this.whenGotS3ObjectStream)
   }
 
+  getLineTrackingForDate(line, date) {
+    const params = { Bucket: this.bucket, Key: `${this.tracking_prefix}/${this.metro_agency}/${line}/${date}.csv`};
+    return this.whenGotS3ObjectStream(params)
+  }
+
+  getLatestLineTracking(line) {
+    const params = { Bucket: this.bucket, Prefix: `${this.tracking_prefix}/${this.metro_agency}/${line}` };
+    return this.whenListAllObjects(params)
+      .then(objects => {
+        const mostRecent = objects[objects.length - 1];
+        return { Bucket: this.bucket, Key: mostRecent };
+      })
+      .then(this.whenGotS3ObjectStream)
+  }
+
   getNetworkHistory() {
     const params = { Bucket: this.bucket, Prefix: this.summary_prefix };
     return this.whenListAllObjects(params)

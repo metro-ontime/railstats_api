@@ -5,6 +5,7 @@ import network from './network';
 import history from "./history";
 import dates from "./dates";
 import schedule from "./schedule"
+import tracking from "./tracking"
 
 export default ({ config, db }) => {
 	let api = Router();
@@ -14,6 +15,7 @@ export default ({ config, db }) => {
 	api.use('/history', history({ config, db }));
   api.use('/dates', dates({ config, db }));
   api.use('/schedule', schedule({ config, db }));
+  api.use('/tracking', tracking({ config, db }));
 
 	// perhaps expose some API metadata at the root
 	api.get('/', (req, res) => {
