@@ -149,9 +149,7 @@ const whenGotS3Object = s3 => params => {
 
 const whenGotS3ObjectStream = s3 => params => {
   return new Promise((resolve, reject) => {
-    var fileStream = fs.createWriteStream('./temp/file.csv')
-    var s3Stream = s3.getObject(params).createReadStream()
-
+    const s3Stream = s3.getObject(params).createReadStream()
     resolve(s3Stream)
   })
 }
