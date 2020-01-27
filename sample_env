@@ -1,0 +1,12 @@
+AWS_ACCESS_KEY_ID=<your_aws_access_key_id>
+AWS_SECRET_ACCESS_KEY=<your_aws_secret_access_key>
+PORT=8080
+BUCKET=railstats-la
+SUMMARY_PREFIX=summaries
+SCHEDULE_PREFIX=schedule
+TRACKING_PREFIX=tracking/processed
+METRO_AGENCY=lametro-rail
+PUBLIC_BUCKET=false
+SSL=false
+SSL_KEY=notRequiredForDev-SSLKeyInBase64
+SSL_CERT=notRequiredForDev-SSLCertInBase64
