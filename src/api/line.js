@@ -1,36 +1,41 @@
-import resource from 'resource-router-middleware';
+import { Router } from 'express';
 
 const lines = ['801', '802', '803', '804', '805', '806'];
 
-export default ({ config, db }) => resource({
+export default ({ config, db }) => {
+  const router = Router();
 
-	/** Property name to store preloaded entity on `request`. */
-	id : 'line',
+  router.get('/', (req, res, next) => {
+    res.json({ "lines": lines })
+  })
 
-	/** For requests with an `id`, you can auto-load the entity.
-	 *  Errors terminate the request, success sets `req[id] = data`.
-	 */
-	load(req, id, callback) {
-		let line = lines.find( line => line===id ),
-			err = line ? null : { "line": "Not found", "data": {} };
-		callback(err, line);
-	},
+  router.get('/:lineId*', (req, res, next) => {
+    const { params: { lineId } } = req
+    if (lines.includes(lineId)) {
+      next()
+    } else {
+      res.json({ "error": "Line not found", "data": null })
+    }
+  })
 
-	/** GET / - List all entities */
-	index({ params }, res) {
-    res.json({ "lines": lines });
-	},
-
-	/** GET /:id - Return a given entity */
-	read({ line, query }, res) {
+  router.get('/:lineId', (req, res, next) => {
+    const { query, params: { lineId } } = req
     if (query.date) {
-      db.getLineStatsForDate(query.date, line).then(data=> {
+      db.getLineStatsForDate(query.date, lineId).then(data=> {
         res.json({ ...data });
       })
     } else {
-      db.getLatestLineStats(line).then((data) => {
+      db.getLatestLineStats(lineId).then((data) => {
         res.json({ ...data });
       });
     }
-	},
-});
+  })
+  
+  router.get('/:lineId/dates', (req, res, next) => {
+    db.getAvailableSummaryDates().then(data => {
+      res.json(data)
+    })
+  })
+
+  return router
+}
