@@ -1,40 +1,44 @@
-import resource from 'resource-router-middleware';
-
-var fs = require('fs');
+import { Router } from 'express';
 
 const lines = ['801', '802', '803', '804', '805', '806'];
 
-export default ({ config, db }) => resource({
+export default ({ config, db }) => {
+  const router = Router()
 
-	/** Property name to store preloaded entity on `request`. */
-	id : 'line_schedule',
+  router.get('/', (req, res, next) => {
+    res.json({ "lines": lines })
+  })
 
-  /** For requests with an `id`, you can auto-load the entity.
-   *  Errors terminate the request, success sets `req[id] = data`.
-   */
-  load(req, id, callback) {
-    let line = lines.find( line => line===id ),
-      err = line ? null : { "line": "Not found", "data": {} };
-    callback(err, line);
-  },
+  router.get('/:lineId*', (req, res, next) => {
+    const { params: { lineId } } = req
+    if (lines.includes(lineId)) {
+      next()
+    } else {
+      res.json({ "error": "Line not found", "data": null })
+    }
+  })
 
-  /** GET / - List all entities */
-  index({ params }, res) {
-    res.json({ "lines": lines });
-  },
-
-  /** GET /:id - Return a given entity */
-	read({ line_schedule, query }, res) {
+  router.get('/:lineId', (req, res, next) => {
+    const { query, params: { lineId } } = req
     if (query.date) {
-      db.getLineScheduleForDate(line_schedule, query.date)
+      db.getLineScheduleForDate(lineId, query.date)
       .then(stream => {
         stream.pipe(res)
       })
     } else {
-      db.getLatestSchedule(line_schedule)
+      db.getLatestSchedule(lineId)
       .then((stream) => {
         stream.pipe(res)
       })
     }
-	},
-});
+  })
+
+  router.get('/:lineId/dates', (req, res, next) => {
+    const { query, params: { lineId } } = req
+    db.getScheduleDates(lineId).then(data => {
+      res.json(data)
+    })
+  })
+
+  return router
+}
