@@ -94,6 +94,19 @@ export class DB {
     return this.whenGotS3ObjectStream(params)
   }
 
+  getTrackingDates(line) {
+    const params = { Bucket: this.bucket, Prefix: `${this.tracking_prefix}/${this.metro_agency}/${line}` };
+    return this.whenListAllObjects(params)
+      .then(objects => {
+        const regex = /([0-9]{4})-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])/;
+        const dates = objects.map(obj => {
+          const match = regex.exec(obj);
+          return match && match[0];
+        }).filter(obj => obj);
+        return dates;
+      })
+  }
+
   getLatestLineTracking(line) {
     const params = { Bucket: this.bucket, Prefix: `${this.tracking_prefix}/${this.metro_agency}/${line}` };
     return this.whenListAllObjects(params)
