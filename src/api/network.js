@@ -1,12 +1,10 @@
-import resource from 'resource-router-middleware';
+import { Router } from 'express';
 
-export default ({ config, db }) => resource({
+export default ({ config, db }) => {
+  const router = Router()
 
-	/** Property name to store preloaded entity on `request`. */
-	id : 'network',
-
-	/** GET / - List all entities */
-	index({ query }, res) {
+  router.get('/', (req, res) => {
+    const { query } = req
     if (query.date) {
       db.getNetworkStatsForDate(query.date).then(data => {
         res.json({ ...data })
@@ -16,6 +14,13 @@ export default ({ config, db }) => resource({
         res.json({ ...data })
       })
     }
-	},
-});
+  })
 
+  router.get('/dates', (req, res) => {
+    db.getAvailableSummaryDates().then(data => {
+      res.json(data)
+    })
+  })
+
+  return router
+}
