@@ -43,10 +43,12 @@ export const prepareNetworkData = data => {
 
   const mostReliable = dataObjects.reduce((previousValue, currentValue) => {
     return windows.map(i => {
-      return currentValue.ontime[`${i}_min`] / currentValue.total_arrivals_analyzed > (previousValue[`${i}_min`] && previousValue[`${i}_min`].percent_ontime || null) ?
+      const currentPercentOnTime = currentValue.ontime[`${i}_min`] / currentValue.total_arrivals_analyzed 
+      const previousPercentOnTime = previousValue[`${i}_min`] && previousValue[`${i}_min`].percent_ontime || 0
+      return currentPercentOnTime > previousPercentOnTime ?
         {
           line: currentValue.name,
-          percent_ontime: currentValue.ontime[`${i}_min`] / currentValue.total_arrivals_analyzed
+          percent_ontime: currentPercentOnTime
         } :
         previousValue[`${i}_min`]
     })
@@ -54,22 +56,25 @@ export const prepareNetworkData = data => {
       obj[`${i + 1}_min`] = item
       return obj
     }, {})
-  });
+  }, {});
 
   const leastReliable = dataObjects.reduce((previousValue, currentValue) => {
     return windows.map(i => {
-      return currentValue.ontime[`${i}_min`] / currentValue.total_arrivals_analyzed < (previousValue[`${i}_min`] && previousValue[`${i}_min`].percent_ontime || 1.01) ?
+      const currentPercentOnTime = currentValue.ontime[`${i}_min`] / currentValue.total_arrivals_analyzed 
+      const previousPercentOnTime = previousValue[`${i}_min`] && previousValue[`${i}_min`].percent_ontime || 1.01
+      return currentPercentOnTime < previousPercentOnTime ?
         {
           line: currentValue.name,
-          percent_ontime: currentValue.ontime[`${i}_min`] / currentValue.total_arrivals_analyzed
-        } :
+          percent_ontime: currentPercentOnTime
+        }
+        :
         previousValue[`${i}_min`]
       })
       .reduce((obj, item, i) => {
         obj[`${i + 1}_min`] = item
         return obj
       }, {})
-  });
+  }, {});
 
   const timestamp = dataObjects[0]["timestamp"];
   const date = dataObjects[0]["date"];
