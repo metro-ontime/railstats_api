@@ -31,7 +31,7 @@
     "body-parser": "^1.13.3",
     "compression": "^1.5.2",
     "cors": "^2.7.1",
-    "express": "^4.13.3",
+    "express": "^4.17.3",
     "express-prometheus-middleware": "^0.6.1",
     "morgan": "^1.8.0",
     "resource-router-middleware": "^0.6.0"
